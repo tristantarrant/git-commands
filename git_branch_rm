@@ -1,0 +1,12 @@
+#!/bin/sh
+USER_REMOTE=`git config --get github.userfork`
+if [ -z "$USER_REMOTE" ]; then
+    echo "Missing git config property 'github.userfork'. Set it to the name of the remote repository which represents your fork of the upstream repository"
+    echo "e.g. git config github.userfork myfork"
+    exit 1
+fi
+
+for i in "$@"; do
+	git branch -D "$i"
+	git push "$USER_REMOTE" :"$i"
+done

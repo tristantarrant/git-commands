@@ -1,0 +1,70 @@
+#!/bin/bash
+# Configure the variables below for your environment
+ORIGIN_REMOTE=`git config --get github.upstream`
+if [ -z "$ORIGIN_REMOTE" ]; then
+    echo "Missing git config property 'github.upstream'. Set it to the name of the remote repository which represents upstream"
+    echo "e.g. git config github.upstream origin"
+    exit 1
+fi
+
+USER_REMOTE=`git config --get github.userfork`
+if [ -z "$USER_REMOTE" ]; then
+    echo "Missing git config property 'github.userfork'. Set it to the name of the remote repository which represents your fork of the upstream repository"
+    echo "e.g. git config github.userfork myfork"
+    exit 1
+fi
+
+TRACKER_URL=`git config --get issue.tracker.url`
+if [ -z "$TRACKER_URL" ]; then
+    echo "Missing git config property 'issue.tracker.url'. Set it to the base URL for issues"
+    echo "e.g. git config issue.tracker.url https://jira.org/browse"
+    exit 1
+fi
+
+
+
+urlencode() {
+    # urlencode <string>
+    local length="${#1}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${1:i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) printf "$c" ;;
+            *) printf '%%%02X' "'$c"
+        esac
+    done
+}
+
+urldecode() {
+    # urldecode <string>
+
+    local url_encoded="${1//+/ }"
+    printf '%b' "${url_encoded//%/\\x}"
+}
+
+# Obtain
+USER_PUSH_URL=`git remote get-url --push "$USER_REMOTE"| cut -f2 -d: | cut -f1 -d/`
+ORIGIN_URL=`git remote get-url --push "$ORIGIN_REMOTE"| cut -f2 -d: | sed "s/\.git$//"`
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+ISSUE=`echo "$BRANCH" | cut -d / -f 1`
+UPSTREAM=`git rev-parse --symbolic-full-name --abbrev-ref "$BRANCH"@{u}|grep -Po "[a-zA-Z0-9]+/\K.*"`
+if [ "$UPSTREAM" != "master" ]; then
+    BASE_FORK="$UPSTREAM..."
+else
+    BASE_FORK="master..."
+fi
+AMP='\&'
+ISSUEURL=`urlencode "$TRACKER_URL/$ISSUE"`
+PR="https://github.com/$ORIGIN_URL/compare/$BASE_FORK$USER_PUSH_URL:$BRANCH?pull_request[body]=$ISSUEURL"
+
+
+echo "Branch: $BRANCH"
+echo "Upstream: $UPSTREAM"
+echo "PR: $PR"
+echo "Issue: $ISSUE"
+
+
+git push -f "$USER_REMOTE" "$BRANCH"
+gio open "$PR"
+
