@@ -1,0 +1,3 @@
+#!/bin/sh
+find . -maxdepth 2 -name '.git' -execdir pwd \; -execdir git pull \; -exec printf '%.s─' $(seq 1 $(tput cols)) \;
+
