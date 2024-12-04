@@ -55,7 +55,7 @@ else
     BASE_FORK="master..."
 fi
 AMP='\&'
-ISSUEURL=`urlencode "$TRACKER_URL/$ISSUE"`
+ISSUEURL=`urlencode "$TRACKER_URL$ISSUE"`
 PR="https://github.com/$ORIGIN_URL/compare/$BASE_FORK$USER_PUSH_URL:$BRANCH?pull_request[body]=$ISSUEURL"
 
 

@@ -1,6 +1,6 @@
 #!/bin/bash
-BRANCHES=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short) U:%(upstream:short)'|tr '\n' ' ')
-BRANCH=$(whiptail --title "Branch Select" --menu "Choose the branch" 20 80 13 $BRANCHES 3>&1 1>&2 2>&3)
+BRANCHES=$(git for-each-ref --count=50 --sort=-committerdate refs/heads/ --format='%(refname:short) U:%(upstream:short)'|tr '\n' ' ')
+BRANCH=$(whiptail --title "Branch Select" --menu "Choose the branch" 20 100 13 $BRANCHES 3>&1 1>&2 2>&3)
 if [ -n "$BRANCH" ]; then
   git checkout "$BRANCH"
 fi
