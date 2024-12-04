@@ -3,21 +3,25 @@
 ORIGIN_REMOTE=`git config --get github.upstream`
 if [ -z "$ORIGIN_REMOTE" ]; then
     echo "Missing git config property 'github.upstream'. Set it to the name of the remote repository which represents upstream"
-    echo "e.g. git config github.upstream origin"
+    echo "Example:"
+    echo "   git config github.upstream origin"
     exit 1
 fi
 
 USER_REMOTE=`git config --get github.userfork`
 if [ -z "$USER_REMOTE" ]; then
     echo "Missing git config property 'github.userfork'. Set it to the name of the remote repository which represents your fork of the upstream repository"
-    echo "e.g. git config github.userfork myfork"
+    echo "Example:"
+    echo "   git config github.userfork myfork"
     exit 1
 fi
 
 TRACKER_URL=`git config --get issue.tracker.url`
 if [ -z "$TRACKER_URL" ]; then
-    echo "Missing git config property 'issue.tracker.url'. Set it to the base URL for issues"
-    echo "e.g. git config issue.tracker.url https://jira.org/browse"
+    echo "Missing git config property 'issue.tracker.url'. Set it to the base URL for issues or simply to a prefix to include before the issue number"
+    echo "Examples:"
+    echo "   git config issue.tracker.url https://jira.org/browse/"
+    echo "   git config issue.tracker.url 'Closes #'"
     exit 1
 fi
 
