@@ -1,5 +1,5 @@
 #!/bin/bash
-USER_REMOTE=`git config --get github.userfork`
+USER_REMOTE=$(git config --get github.userfork)
 BRANCHES=$(git for-each-ref --count=100 --sort=-committerdate refs/heads/ --format='%(refname:short)'|tr '\n' ' ')
 if [ -n "$BRANCH" ]; then
   git checkout "$BRANCH"

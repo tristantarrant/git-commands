@@ -1,5 +1,5 @@
 #!/bin/sh
-USER_REMOTE=`git config --get github.userfork`
+USER_REMOTE=$(git config --get github.userfork)
 if [ -z "$USER_REMOTE" ]; then
     echo "Missing git config property 'github.userfork'. Set it to the name of the remote repository which represents your fork of the upstream repository"
     echo "e.g. git config github.userfork myfork"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Configure the variables below for your environment
-ORIGIN_REMOTE=`git config --get github.upstream`
+ORIGIN_REMOTE=$(git config --get github.upstream)
 if [ -z "$ORIGIN_REMOTE" ]; then
     echo "Missing git config property 'github.upstream'. Set it to the name of the remote repository which represents upstream"
     echo "Example:"
@@ -8,7 +8,7 @@ if [ -z "$ORIGIN_REMOTE" ]; then
     exit 1
 fi
 
-USER_REMOTE=`git config --get github.userfork`
+USER_REMOTE=$(git config --get github.userfork)
 if [ -z "$USER_REMOTE" ]; then
     echo "Missing git config property 'github.userfork'. Set it to the name of the remote repository which represents your fork of the upstream repository"
     echo "Example:"
@@ -16,7 +16,7 @@ if [ -z "$USER_REMOTE" ]; then
     exit 1
 fi
 
-TRACKER_URL=`git config --get issue.tracker.url`
+TRACKER_URL=$(git config --get issue.tracker.url)
 if [ -z "$TRACKER_URL" ]; then
     echo "Missing git config property 'issue.tracker.url'. Set it to the base URL for issues or simply to a prefix to include before the issue number"
     echo "Examples:"
@@ -33,7 +33,7 @@ urlencode() {
     for (( i = 0; i < length; i++ )); do
         local c="${1:i:1}"
         case $c in
-            [a-zA-Z0-9.~_-]) printf "$c" ;;
+            [a-zA-Z0-9.~_-]) print "$c" ;;
             *) printf '%%%02X' "'$c"
         esac
     done
@@ -47,19 +47,19 @@ urldecode() {
 }
 
 # Obtain
-USER_PUSH_URL=`git remote get-url --push "$USER_REMOTE"| cut -f2 -d: | cut -f1 -d/`
-ORIGIN_URL=`git remote get-url --push "$ORIGIN_REMOTE"| cut -f2 -d: | sed "s/\.git$//"`
+USER_PUSH_URL=$(git remote get-url --push "$USER_REMOTE"| cut -f2 -d: | cut -f1 -d/)
+ORIGIN_URL=$(git remote get-url --push "$ORIGIN_REMOTE"| cut -f2 -d: | sed "s/\.git$//")
 
-BRANCH=`git rev-parse --abbrev-ref HEAD`
-ISSUE=`echo "$BRANCH" | cut -d / -f 1`
-UPSTREAM=`git rev-parse --symbolic-full-name --abbrev-ref "$BRANCH"@{u}|grep -Po "[a-zA-Z0-9]+/\K.*"`
-if [ "$UPSTREAM" != "master" ]; then
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ISSUE=$(echo "$BRANCH" | cut -d / -f 1)
+UPSTREAM=$(git rev-parse --symbolic-full-name --abbrev-ref "$BRANCH"@{u}|grep -Po "[a-zA-Z0-9]+/\K.*")
+if [ "$UPSTREAM" != "main" ]; then
     BASE_FORK="$UPSTREAM..."
 else
-    BASE_FORK="master..."
+    BASE_FORK="main..."
 fi
-AMP='\&'
-ISSUEURL=`urlencode "$TRACKER_URL$ISSUE"`
+
+ISSUEURL=$(urlencode "$TRACKER_URL$ISSUE")
 PR="https://github.com/$ORIGIN_URL/compare/$BASE_FORK$USER_PUSH_URL:$BRANCH?pull_request[body]=$ISSUEURL"
 
 

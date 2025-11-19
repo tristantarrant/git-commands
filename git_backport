@@ -11,9 +11,9 @@ fi
 
 SUFFIX=${BASH_REMATCH[1]}
 
-CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-echo $CURRENT_BRANCH
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+echo "$CURRENT_BRANCH"
 
-git checkout -b "$CURRENT_BRANCH-$SUFFIX" $1
+git checkout -b "$CURRENT_BRANCH-$SUFFIX" "$1"
 git cherry-pick "$CURRENT_BRANCH"
 
